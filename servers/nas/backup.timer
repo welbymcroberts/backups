@@ -1,0 +1,9 @@
+[Unit]
+Description=Backup
+
+[Timer]
+OnBootSec=0
+OnUnitActiveSec=1days
+
+[Install]
+WantedBy=timers.target

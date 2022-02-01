@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup
+ConditionPathExists=/backup/scripts/run.sh
+
+[Service]
+Type=oneshot
+ExecStart=/backup/scripts/run.sh
+WorkingDirectory=/backup/scripts/
