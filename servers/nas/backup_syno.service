@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup
+ConditionPathExists=/backup/scripts/to_syno.sh
+
+[Service]
+Type=oneshot
+ExecStart=/backup/scripts/to_syno.sh
+WorkingDirectory=/backup/scripts/
