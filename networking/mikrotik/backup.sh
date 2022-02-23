@@ -2,7 +2,7 @@
 
 # User we connect as to the router
 backupuser="backup"
-# List of devices "name:ip_or_dns"
+# List of devices "name:ip_or_dns^healthcheck"
 devices=(
         "rb5009-1:100.65.0.1"
         "rb5009-2:100.65.0.2"
@@ -14,26 +14,48 @@ date=`date --rfc-3339=date`
 
 # Iterate over each device in array
 for I in "${devices[@]}"; do
-	# TODO: Healthchecks started
+
         # Get name from array
         device="${I%%:*}"
+        # Get IP & Health from array
+        ip_health="${I##*:}"
         # Get IP from array
-        ip="${I##*:}"
+        ip="${ip_health%%^*}"
+        # Health
+        health=https://"${ip_health##*^}"
+
+        # Start healthcheck
+        curl --retry 3 -s ${health}/start -o /dev/null
+
         # Create directory for device backups
-        mkdir -p $dest/$device
+        mkdir -p $dest/$device/$date
+
         # Log, and echo, that we're connecting
-        logger "Connecting to $I"
-        echo "Connecting to $I"
+        logger "Connecting to ${device} on ${ip} with HC of ${health}"
+	echo "Connecting to ${device} on ${ip} with HC of ${health}"
 
 	# Via SSH do a export of configuration (text)
-        ssh $backupuser@$ip -i /backup/networking/ssh.ros '/export compact' > $dest/$device/$date.rosexport
+        ssh $backupuser@$ip -i /backup/networking/ssh.ros '/export compact' > $dest/$device/$date/rosexport
+        if [ $? -ne 0 ]; then curl --retry 3 -s ${health}/${?} -o /dev/null; continue; fi
+
 	# Via SSH get some stats (health, routerboard, resources, config history, package versions) and save to .system.
 	# Also perform an unencrypted backup to backup.backup on router	
-        ssh $backupuser@$ip -i /backup/networking/ssh.ros  '/system health print; :put "###"; /system routerboard pri; :put "###"; /system resource pri; :put "###"; /system history print det; :put "###"; /system package pri; :put "###"; /sys backup save dont-encrypt=yes name=backup.backup' > $dest/$device/$date.system
+        ssh $backupuser@$ip -i /backup/networking/ssh.ros  '/system health print; :put "###"; /system routerboard pri; :put "###"; /system resource pri; :put "###"; /system history print det; :put "###"; /system package pri; :put "###"; /sys backup save dont-encrypt=yes name=backup.backup' > $dest/$device/$date/system
+        if [ $? -ne 0 ]; then curl --retry 3 -s ${health}/${?} -o /dev/null; continue; fi
+
         # SCP backup.backup to .backup
-        scp -i /backup/networking/ssh.ros $backupuser@$ip:/backup.backup $dest/$device/$date.backup > /dev/null
+        scp -i /backup/networking/ssh.ros $backupuser@$ip:/backup.backup $dest/$device/$date/backup > /dev/null
+        if [ $? -ne 0 ]; then curl --retry 3 -s ${health}/${?} -o /dev/null; continue; fi
+
         # Log and Echo finished message
-        echo "Finished $I"
-        logger "Finished $I"
-	# TODO: Healthchecks completed
+        echo "Finsihed ${device} on ${ip} with HC of ${health}"
+	logger "Finished ${device} on ${ip} with HC of ${health}"
+
+        if [ -s $dest/$device/$date/rosexport ] && [ -s $dest/$device/$date/system ] && [ -s $dest/$device/$date/backup ]; then
+            curl --retry 3 -s ${health} -o /dev/null
+        else
+            curl --retry 3 -s ${health}/255 -o /dev/null
+        fi
+
+
 done

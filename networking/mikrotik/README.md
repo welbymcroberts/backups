@@ -12,10 +12,10 @@ The script which is run is [backup.sh](/networking/mikrotik/backup.sh)
 This script contains a array of devices with IP addresses
 
 ```
-# List of devices "name:ip_or_dns"
+# List of devices "name:ip_or_dns^url_for_healthcheck"
 devices=(
-        "rb5009-1:100.65.0.1"
-        "rb5009-2:100.65.0.2"
+        "rb5009-1:100.65.0.1^healthcheck/ping"
+        "rb5009-2:100.65.0.2^healthcheck/ping"
 )
 ```
 
@@ -24,9 +24,9 @@ A new device would require a new line in the format of freindlyname:ipaddress.
 The script then uses the SSH key which is stored in /backup/networking/ssh.ros, and connects as ${backupuser}.
 
 The script will connect and then run multiple commands
-* `/export compact` which is stored in `${date}.rosexport`
-* `/system health print`, `/system routerboard print`, `/system history print`, `/system package print`, `/sys backup save dont-exncrypt=yes name=backup.backup`, the output from these commands are storeed in `${date}.system`
-* SCP of `backup.backup` from router to ${date}.backup
+* `/export compact` which is stored in `${date}/rosexport`
+* `/system health print`, `/system routerboard print`, `/system history print`, `/system package print`, `/sys backup save dont-exncrypt=yes name=backup.backup`, the output from these commands are storeed in `${date}/system`
+* SCP of `backup.backup` from router to ${date}/backup
 
 ### Cloud
 Mikrotik offer a cloud backup of a RouterOS devices configuration. This is still a TODO to investigate.
@@ -39,7 +39,7 @@ No aditional software is required, as this is provides the native backup file, a
 #### Backup file
 
 1. Upload the backup to the RouterOS device
-2. `/system/backup/load name=${date}.backup`
+2. `/system/backup/load name=backup`
 3. Reboot the RouterOS device with `/system/reboot` if not already rebooting
 
 #### Configuration export
@@ -69,7 +69,7 @@ Other devices were confirmed to be backing up with valid files.
 Restore was from NAS, however file was also downloaded from Hyper Backup archive on [DW Synology](/servers/dw-synology/README.md) and [Hetzner Storage Box](/cloud-services/hetzner-storage-box/README.md) which confirms that [Synology](/servers/synology/README.md) also has a valid copy of the file due to the Chain being 1->2->3->4+5
 
 # Backup job verification
-TODO: Currently there is no verification that a job has been completed.
+Whilst the backup is not checked that it is 'valid', a non zero size is checked for each file, and a health check is sent to healthchecks.io. If these are not run within a predefined time frame, or an error occurs an alert will be sent.
 
 
 ---
