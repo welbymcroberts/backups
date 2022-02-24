@@ -10,7 +10,7 @@ devices=(
         "rb5009-2:100.65.0.2^healthceck.io/whatever"
 )
 # Path to backup directory
-dest="/backup/networking"
+dest="/backup/networking/mikrotik/"
 # Current date, in sensible format TODO: This won't work on some date implementations, such as MacOS
 date=$(date --rfc-3339=date)
 # Healthcheck for git
