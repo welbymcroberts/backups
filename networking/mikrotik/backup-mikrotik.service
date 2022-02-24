@@ -1,0 +1,15 @@
+[Unit]
+Description=Backups for Mikrotik devices
+After=network.target
+ConditionPathExists=/backup/scripts/networking/mikrotik/
+
+[Service]
+Type=oneshot
+ExecStart=/backup/scripts/networking/mikrotik/backup.sh
+WorkingDirectory=/backup/scripts/networking/mikrotik/
+User=root
+StandardOutput=null
+
+
+[Install]
+WantedBy=multi-user.target

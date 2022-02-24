@@ -71,6 +71,14 @@ Restore was from NAS, however file was also downloaded from Hyper Backup archive
 # Backup job verification
 Whilst the backup is not checked that it is 'valid', a non zero size is checked for each file, and a health check is sent to healthchecks.io. If these are not run within a predefined time frame, or an error occurs an alert will be sent.
 
+# Install
+1. Place files in `/backup/scripts/networking/mikrotik/` (or update scripts to reflect this)
+2. Copy systemd unit file to your systemd unit path, for example `/lib/systemd/system`
+3. Copy systemd timer file to your systemd unit path, for example `/lib/systemd/system`
+4. Ensure the user which this will run as has the SSH Host Keys ~/.ssh/known_hosts. For example, SSH to the IP for each host.
+5. Create an SSH Key and store in path mentioned in script.
+6. Create any healthchecks for each router.
+7. Enable the timer `systemctl enable --now backup-mikrotik.timer`
 
 ---
 [Home](/README.md) | [Networking](/networking/README.md)
