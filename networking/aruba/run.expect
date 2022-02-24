@@ -1,13 +1,20 @@
 #!/usr/bin/expect
+
+set timeout 60
+log_user 0
+
 # Read PW
 set f [open ".arubapass" r]
 set pw [read $f]
 close $f
 
-#Start SSH session
-spawn ssh admin@192.168.9.252
-sleep 2
+# Get user and host from args
+set user [lindex $argv 0];
+set host [lindex $argv 1];
 
+#Start SSH session
+spawn ssh $user@$host
+sleep 2
 #password prompt and send password
 expect {
 "word:" {send -- "$pw\n" }
@@ -15,14 +22,10 @@ expect {
 sleep 5
 # Show running
 expect {
-"#" {send "show running-config\r"}
+"#" { log_user 1;send "show running-config no-encrypt\n"}
 }
 sleep 5
 #Exit cleanly
 expect {
-"*#" {send "exit\r"}
-}
-sleep 1
-expect {
-"*>" {send "exit\r"}
+"*#" { log_user 0; send "exit\n"}
 }
