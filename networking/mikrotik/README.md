@@ -5,7 +5,7 @@ RouterOS devices provide an number of different ways to extract configuration. T
 # Processes
 ## Backup
 ### Local
-Backups are run from [NAS](/servers/nas/README.md) as part of a cronjob. This is run at 03:00 daily.
+Backups are run from [NAS](/servers/nas/README.md) as part of a cronjob. This is run daily.
 
 The script which is run is [backup.sh](/networking/mikrotik/backup.sh)
 
