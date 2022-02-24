@@ -1,0 +1,15 @@
+[Unit]
+Description=Backups for aruba devices
+After=network.target
+ConditionPathExists=/backup/scripts/networking/aruba/
+
+[Service]
+Type=oneshot
+ExecStart=/backup/scripts/networking/aruba/backup.sh
+WorkingDirectory=/backup/scripts/networking/aruba/
+User=root
+StandardOutput=null
+
+
+[Install]
+WantedBy=multi-user.target

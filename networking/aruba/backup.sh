@@ -12,12 +12,12 @@ devices=(
 )
 
 # Path to backup directory
-dest="/backup/networking"
+dest="/backup/networking/aruba/"
 
 # Current date, in sensible format TODO: This won't work on some date implementations, such as MacOS
 date=$(date --rfc-3339=date)
 
-# TODO: HCURL="https://aaaaa"
+HCURL="https://aaaaa"
 
 
 # Iterate over each device in array
@@ -44,7 +44,7 @@ for I in "${devices[@]}"; do
 	echo "Connecting to ${device} on ${ip} with HC of ${health}"
 
 	# Run expect and Top + tail it with 1 line
-        if ! ./run.expect ${backupuser} ${ip} | tail -n +2 |head -n -1 > ${dest}/"${device}"/"${date}"/show_running; then ${curl} "${health}"/${?}; continue; fi
+        if ! ./backup.expect ${backupuser} ${ip} | tail -n +2 |head -n -1 > ${dest}/"${device}"/"${date}"/show_running; then ${curl} "${health}"/${?}; continue; fi
 
         # Check output is >0 bytes
         if [ -s ${dest}/"${device}"/"${date}"/show_running ]; then
