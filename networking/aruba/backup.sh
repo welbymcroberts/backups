@@ -23,42 +23,42 @@ HCURL="https://aaaaa"
 # Iterate over each device in array
 for I in "${devices[@]}"; do
 
-        # Get name from array
-        device="${I%%:*}"
-        # Get IP & Health from array
-        ip_health="${I##*:}"
-        # Get IP from array
-        ip="${ip_health%%^*}"
-        # Health
-        health=https://"${ip_health##*^}"
+    # Get name from array
+    device="${I%%:*}"
+    # Get IP & Health from array
+    ip_health="${I##*:}"
+    # Get IP from array
+    ip="${ip_health%%^*}"
+    # Health
+    health=https://"${ip_health##*^}"
 
-        # Start healthcheck
-        ${curl} "${health}/start"
+    # Start healthcheck
+    ${curl} "${health}/start"
 
-        # Create directory for device backups
-        mkdir -p "${dest}/${device}/${date}"
-        mkdir -p "${dest}/current/${device}"
+    # Create directory for device backups
+    mkdir -p "${dest}/${device}/${date}"
+    mkdir -p "${dest}/current/${device}"
 
-        # Log, and echo, that we're connecting
-        logger "Connecting to ${device} on ${ip} with HC of ${health}"
+    # Log, and echo, that we're connecting
+    logger "Connecting to ${device} on ${ip} with HC of ${health}"
 	echo "Connecting to ${device} on ${ip} with HC of ${health}"
 
 	# Run expect and Top + tail it with 1 line
-        if ! ./backup.expect ${backupuser} ${ip} | tail -n +2 |head -n -1 > ${dest}/"${device}"/"${date}"/show_running; then ${curl} "${health}"/${?}; continue; fi
+    if ! ./backup.expect ${backupuser} ${ip} | tail -n +2 |head -n -1 > ${dest}/"${device}"/"${date}"/show_running; then ${curl} "${health}"/${?}; continue; fi
 
-        # Check output is >0 bytes
-        if [ -s ${dest}/"${device}"/"${date}"/show_running ]; then
-	    # Copy export, ignoring the first line, to current
-            if ! tail -n +2 ${dest}/${device}/${date}/show_running > "${dest}/current/${device}/show_running"; then ${curl} "${health}"/${?} --data-raw "Failed copying to current"; continue; fi
-            # Success
-            ${curl} "${health}"
-        else
-            ${curl} "${health}"/255 --data-raw "File sizes are zero bytest";
-            continue;
-        fi
+    # Check output is >0 bytes
+    if [ -s ${dest}/"${device}"/"${date}"/show_running ]; then
+    # Copy export, ignoring the first line, to current
+        if ! cat ${dest}/${device}/${date}/show_running > "${dest}/current/${device}/show_running"; then ${curl} "${health}"/${?} --data-raw "Failed copying to current"; continue; fi
+        # Success
+        ${curl} "${health}"
+    else
+        ${curl} "${health}"/255 --data-raw "File sizes are zero bytes";
+        continue;
+    fi
 
-        # Log and Echo finished message
-        echo "Finsihed ${device} on ${ip} with HC of ${health}"
+    # Log and Echo finished message
+    echo "Finsihed ${device} on ${ip} with HC of ${health}"
 	logger "Finished ${device} on ${ip} with HC of ${health}"
 
 done
