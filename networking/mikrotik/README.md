@@ -5,11 +5,11 @@ RouterOS devices provide an number of different ways to extract configuration. T
 # Processes
 ## Backup
 ### Local
-Backups are run from [NAS](/servers/nas/README.md) as part of a cronjob. This is run daily.
+Backups are run from [NAS](/servers/nas/README.md) as part of a systemd timer. This is run daily.
 
 The script which is run is [backup.sh](/networking/mikrotik/backup.sh)
 
-This script contains a array of devices with IP addresses
+This script contains a array of devices with IP addresses and healthcheck url
 
 ```
 # List of devices "name:ip_or_dns^url_for_healthcheck"
@@ -19,9 +19,9 @@ devices=(
 )
 ```
 
-A new device would require a new line in the format of freindlyname:ipaddress.
+A new device would require a new line in the format of freindlyname:ipaddress^healthcheck.
 
-The script then uses the SSH key which is stored in /backup/networking/ssh.ros, and connects as ${backupuser}.
+The script then uses the SSH key which is stored in /backup/scripts/networking/mikrotik/ssh.ros, and connects as ${backupuser}.
 
 The script will connect and then run multiple commands
 * `/export compact` which is stored in `${date}/rosexport`
