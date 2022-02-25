@@ -21,19 +21,21 @@ devices=(
 
 A new device would require a new line in the format of freindlyname:ipaddress^healthcheck.
 
-The script then uses the SSH key which is stored in /backup/scripts/networking/mikrotik/ssh.ros, and connects as ${backupuser}.
+The script then uses the SSH key which is stored in `/backup/scripts/networking/mikrotik/ssh.ros`, and connects as `${backupuser}`.
 
 The script will connect and then run multiple commands
 * `/export compact` which is stored in `${date}/rosexport`
 * `/system health print`, `/system routerboard print`, `/system history print`, `/system package print`, `/sys backup save dont-exncrypt=yes name=backup.backup`, the output from these commands are storeed in `${date}/system`
 * SCP of `backup.backup` from router to ${date}/backup
-
+* A copy of `rosexport` is also commited to the git repo in `current/`
+  
 ### Cloud
 Mikrotik offer a cloud backup of a RouterOS devices configuration. This is still a TODO to investigate.
 
 ## Restore
 ### Software requirements
-No aditional software is required, as this is provides the native backup file, and a text based `/export` of the configuration
+To perform a backup CURL, OpenSSH/Dropbear/Another SSH+SCP client are required. These are FOSS.
+No aditional software is required to restore, as this is provides the native backup file, and a text based `/export` of the configuration
 
 ### Steps
 #### Backup file

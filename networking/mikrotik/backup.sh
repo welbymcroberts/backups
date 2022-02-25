@@ -55,7 +55,7 @@ for I in "${devices[@]}"; do
             # Success
             ${curl} "${health}"
         else
-            ${curl} "${health}"/255 --data-raw "File sizes are zero bytest";
+            ${curl} "${health}"/255 --data-raw "File sizes are zero bytes";
             continue;
         fi
 
