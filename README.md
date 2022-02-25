@@ -32,7 +32,7 @@ For critical data it is also worth considering that one copy is 'immutable' or o
 
 A scheduled task to do a test restore of a backup should be performed on a semi-regular interval. 
 
-TODO: List schedules and example log 
+Schedules for backups can be seen on each individual device as per below, they can also be seen in [this document](verification.md)
 
 An additional task should be to take a checksum of the data, allowing to check for bit rot (at least at a high level) for the backup.
 
@@ -49,18 +49,19 @@ Generally FOSS will be preferable over COTS due to the open nature of the softwa
 
 Examples could be:
 
-* TARtarvs Veritas
-Whilst Veritas is a supported COTS application, that likely will be readable in the future, the tar standard is moderately unchanged since its format standardisation in 1988 and 2001. Both formats are supported by modern tar compatible software.
+* tar vs Veritas
+Whilst Veritas is a supported COTS application, that likely will be readable in the future, the tar standard is moderately unchanged since its format standardisation in 1988 and refinement in 2001. Both formats are supported by modern tar compatible software.
 
 * Zip vs RAR
-RAR is a wonderful compression and container format like ZIP, however it is less well documented and supported compared to the ZIP format. Due to this, despite potential higher storage requirements of ZIP, it is preferable to use the format which is supported by more software and is public domain. An argument could be made that the IETF standard of gzip coupled with tar may infact be preferable to ZIP
+RAR is a wonderful compression and container format like ZIP, however it is less well documented and supported compared to the ZIP format, it is also against the RAR liscence to create a utility that can read / write to RAR files. Due to this, despite potential higher storage requirements of ZIP, it is preferable to use the format which is supported by more software and is public domain. An argument could be made that the IETF standard of gzip, coupled with tar may infact be preferable to ZIP.
 
 * Machine Backups
-There are a number of options available for backing up machines. An open standard will be preferable, however the 'ease of backup and management' also has to be considered. Something like Borg, Rustic etc may be great options for a platform like Linux, but from a usability perspective, it is less preferable to a built in solution like Mac OS's Time Machine. Another example may by Synology's Active Backup. This is not a great solution from readability of data, as it does require a significant amount of work to manually restore.
+There are a number of options available for backing up machines. An open standard will be preferable, however the 'ease of backup and management' also has to be considered. Something like Borg, Restic etc may be great options for a platform like Linux, but from a usability perspective, it is less preferable to a built in solution like Mac OS's Time Machine. Another example may by Synology's Active Backup. This is not a great solution from readability of data, as it does require a significant amount of work to manually restore.
 
 ***
 Per device or service backup strategies and restore instructions
 
-## [Servers](/Servers/README.md)
+## [Servers](/servers/README.md)
 ## [Networking](/networking/README.md)
-## [Cloud Services](/CloudServices/README.md)
+## [IoT](/iot/README.md)
+## [Cloud Services](/cloudservices/README.md)
