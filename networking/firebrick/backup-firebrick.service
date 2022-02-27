@@ -1,0 +1,15 @@
+[Unit]
+Description=Backups for firebrick devices
+After=network.target
+ConditionPathExists=/backup/scripts/networking/firebrick/
+
+[Service]
+Type=oneshot
+ExecStart=/backup/scripts/networking/firebrick/backup.sh
+WorkingDirectory=/backup/scripts/networking/firebrick/
+User=root
+StandardOutput=null
+
+
+[Install]
+WantedBy=multi-user.target
