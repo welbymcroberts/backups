@@ -1,12 +1,18 @@
-# run.sh
-This takes path lists from paths, and excludes those in paths.exclude and will rsync to the directory defined in paths
+# NAS
 
-# to_syno.sh
-Performs a similar role to run.sh, but copies the paths.syno paths to the synology nas as per paths.syno's desitination via SSH.
-As the synoloyg doesn't seem to reliably allow ssh key based login, a custom 'rsh' is being used in rsync, syno_rsh.sh
+The `NAS` server runs a number of services, and also is used to kick off backups of some other devices.
 
+As the machine is a Linux machine, a number of different things must be backed up. In order to keep with the same format used for other devices, these are split into indivdual files describing the backup
 
-# syno_rsh.sh
-This simply uses sshpass, catting a password from a file, and ssh's to the device specified.
+# Backed Up items
+## [System Config](config/README.md)
+## [Networking Backups](networking_backups/README.md)
 
+# Backups run from device
+## Networking
+### [Mikrotik](/networking/mikrotik/README.md)
+### [Firebrick](/networking/firebrick/README.md)
+### [Aruba](/networking/aruba/README.md)
 
+---
+[Home](/README.md) | [Servers](/servers/README.md)
