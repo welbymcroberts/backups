@@ -43,8 +43,13 @@ for I in "${devices[@]}"; do
         if ! ssh ${backupuser}@"${ip}" -i /backup/networking/ssh.ros '/export compact' > "$dest/$device/$date/rosexport"; then ${curl} "${health}"/${?} --data-raw "Failed getting /export"; continue; fi
 
 	# Via SSH get some stats (health, routerboard, resources, config history, package versions) and save to .system.
+ 	# Some devices don't have /system health, check first
 	# Also perform an unencrypted backup to backup.backup on router
-        if ! ssh $backupuser@"$ip" -i /backup/networking/ssh.ros  '/system health print; :put "###"; /system routerboard pri; :put "###"; /system resource pri; :put "###"; /system history print det; :put "###"; /system package pri; :put "###"; /sys backup save dont-encrypt=yes name=backup.backup' > ${dest}/"${device}"/"${date}"/system; then ${curl} "${health}"/${?} --data-raw "Failed creating backup"; continue; fi
+ 	if ssh $backupuser@"$ip" -i /backup/networking/ssh.ros  '/system health print' > /dev/null 2>&1; then
+		if ! ssh $backupuser@"$ip" -i /backup/networking/ssh.ros  '/system health print; :put "###"; /system routerboard pri; :put "###"; /system resource pri; :put "###"; /system history print det; :put "###"; /system package pri; :put "###"; /sys backup save dont-encrypt=yes name=backup.backup' > ${dest}/"${device}"/"${date}"/system; then ${curl} "${health}"/${?} --data-raw "Failed creating backup"; continue; fi
+	else
+ 		if ! ssh $backupuser@"$ip" -i /backup/networking/ssh.ros  '/system routerboard pri; :put "###"; /system resource pri; :put "###"; /system history print det; :put "###"; /system package pri; :put "###"; /sys backup save dont-encrypt=yes name=backup.backup' > ${dest}/"${device}"/"${date}"/system; then ${curl} "${health}"/${?} --data-raw "Failed creating backup"; continue; fi
+   	fi
         
         # SCP backup.backup to .backup
         if ! scp -i /backup/networking/ssh.ros $backupuser@"$ip":/backup.backup ${dest}/"${device}"/"${date}"/backup > /dev/null; then ${curl} "${health}"/${?} --data-raw "Failed retreiving backup"; continue; fi
